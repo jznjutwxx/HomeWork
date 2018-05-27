@@ -1,28 +1,47 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
+    <div id="navi" class="navi">
+      <ul class="ulcss">
+      <li><router-link class="licss" to="/">Home&nbsp;|</router-link></li>
+      <li><router-link class="licss" to="/gcztStatistics">工程状态统计</router-link></li>      
+    </ul>
+    </div>
+    <div>
+      <router-view></router-view>
+    </div>    
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+  components: {}
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
-  margin-top: 60px;
+  /* margin-top: 60px; */
+}
+.navi {
+  width: 100%;
+  height: 30px;
+}
+.ulcss{
+  list-style-type: none;
+  padding-left: 14px;
+}
+.licss{
+  float: left;
+  text-decoration: none;
+  margin-left: 5px;
+}
+.licss:hover{
+  background-color: aqua;
 }
 </style>

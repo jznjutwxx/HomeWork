@@ -198,7 +198,9 @@ export default {
       markers: []
     };
   },
-  mounted: function() {},
+  mounted: function() {
+      this.initMap();
+  },
   methods: {
     initMap: function() {
       this.map = new SuperMap.Map("showMap", {

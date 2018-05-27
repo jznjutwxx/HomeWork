@@ -5,7 +5,6 @@
 
 </template>
 <script>
-import '../../script/SuperMap/libs/SuperMap.Include'
 import GCMap from './map'
 export default {
     data:function(){

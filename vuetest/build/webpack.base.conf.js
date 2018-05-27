@@ -4,7 +4,7 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
@@ -13,14 +13,23 @@ function resolve (dir) {
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
+    vendor: [
+      './src/script/SuperMap/libs/SuperMap-8.1.1-14426.js', 
+      './src/script/SuperMap/libs/SuperMap_Plot-8.1.1-14426.js', 
+      './src/script/SuperMap/libs/SuperMap_Basic-8.1.1-14426.js', 
+      './src/script/SuperMap/libs/SuperMap_IServer-8.1.1-14426.js',
+      './src/script/SuperMap/libs/SuperMap_Visualization-8.1.1-14426.js',
+      './src/script/SuperMap/libs/SuperMap_OGC-8.1.1-14426.js',
+      './src/script/SuperMap/libs/SuperMap_Cloud-8.1.1-14426.js'
+    ],
     app: './src/main.js'
   },
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
-      ? config.build.assetsPublicPath
-      : config.dev.assetsPublicPath
+    publicPath: process.env.NODE_ENV === 'production' ?
+      config.build.assetsPublicPath :
+      config.dev.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
@@ -30,8 +39,7 @@ module.exports = {
     }
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.vue$/,
         loader: 'vue-loader',
         options: vueLoaderConfig

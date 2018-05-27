@@ -143,12 +143,89 @@
         </div>
         <div id="showMap" style="height:100%;border:0">
         </div>
+        <div class="hideDown" title="隐藏" @click="hideDown">
+            <img src="/static/Images/gczl/btn_down.png" alt="隐藏" />
+        </div>
+        <div class="showUp" title="显示" @click="showUp">
+            <img src="/static/Images/gczl/btn_up.png" alt="显示" />
+        </div>
+        <div class="proTable">
+            <el-tabs v-model="editableTabsValue2" type="card" @tab-click="clickTabsPane">
+              <el-tab-pane v-for="(item,index) in editableTabs2" 
+                                :key="item.name"
+                                :label="item.title"
+                                :name="item.name"
+                                :value="item.content">
+                <el-table :data="tableData"
+                           border
+                           stripe
+                           size="small"
+                           :key="index"
+                           style="width:100%">
+                  <el-table-column type="index"
+                                    label="序号"
+                                    align="right"
+                                    header-align="center">
+                  </el-table-column>
+                  <el-table-column label="工程名称"
+                                    prop="s_name"
+                                    align="left"
+                                    header-align="center">
+                  </el-table-column>
+                  <el-table-column prop="s_project_no"
+                                         label="工程编号"
+                                         align="right"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="n_pace_status"
+                                         label="工程状态"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="s_town"
+                                         label="所属镇"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="n_total_invest"
+                                         label="投资总金额(万元)"
+                                         align="right"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="s_legal_person"
+                                         label="项目法人"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="s_unit_design"
+                                         label="设计单位"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                </el-table>
+                <!-- 分页 -->
+                <el-form :inline="true" label-position="left" size="mini">
+                  <div style="text-align:left;">
+                      <el-form-item>
+                          <el-pagination :total="total" 
+                                        :current-page="currentPage" 
+                                        :page-size="pagesize" 
+                                        @current-change="currentChange" 
+                                        @size-change="sizeChange"
+                                        layout="total, prev, pager, next, jumper">
+                          </el-pagination>
+                      </el-form-item>
+                  </div>
+                </el-form>
+              </el-tab-pane>
+            </el-tabs>
+        </div>
 
     </div>
 
 </template>
 <script>
-import $ from "jquery"
+import $ from "jquery";
 export default {
   data: function() {
     return {
@@ -195,11 +272,17 @@ export default {
         "http://222.66.154.70:8090/iserver/services/data-gcct0514/rest/data",
       vectorLayer: null, //点线面feature显示的图层
       vectorDataList: [], //点线面feature的数据集合
-      markers: []
+      markers: [],
+      editableTabsValue2: "1",
+      editableTabs2: [],
+      tableData: [],
+      total:0,//总条目数
+      currentPage: 1,//默认从第一页开始
+      pagesize: 4,//每页的数据条数
     };
   },
   mounted: function() {
-      this.initMap();
+    this.initMap();
   },
   methods: {
     initMap: function() {
@@ -283,6 +366,32 @@ export default {
     },
     mapZoomSmall: function() {
       this.map.zoomTo(this.map.getZoom() - 1);
+    },
+    hideDown: function() {
+      $(".hideDown").hide();
+      $(".proTable").animate({ height: "hide" }, "normal", function() {
+        $(".showUp").show();
+      });
+    },
+    showUp: function() {
+      $(".showUp").hide();
+      $(".proTable").animate({ height: "show" }, "normal", function() {
+        $(".hideDown").show();
+      });
+    },
+    clickTabsPane: function(tab, event) {
+
+    },
+    currentChange:function(currentPage){
+        this.currentPage=currentPage;
+        this.refreshTableData();
+    },
+    sizeChange:function(pagesize){
+        this.pagesize=pagesize;
+        this.refreshTableData();
+    },
+    refreshTableData:function(){
+
     }
   }
 };
@@ -383,6 +492,34 @@ export default {
   width: 252px;
   height: 165px;
   display: none;
+}
+.hideDown {
+  position: absolute;
+  z-index: 1355;
+  left: 49%;
+  width: 32px;
+  height: 32px;
+  text-align: center;
+}
+.showUp {
+  position: absolute;
+  z-index: 1355;
+  left: 49%;
+  bottom: 4px;
+  width: 32px;
+  text-align: center;
+  height: 22px;
+  display: none;
+}
+.proTable {
+  z-index: 1254;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 270px;
+  background-color: #ffffff;
+  overflow: hidden;
 }
 </style>
 

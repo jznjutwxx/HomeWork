@@ -1,6 +1,7 @@
 <template>
     <div id="Basetable">
-        <el-table :data="tableData" size="small" border  stripe :height="maxHeight">
+      <!-- 高度暂时写死 -->
+        <el-table :data="tableData" size="small" border  stripe :height="400"> 
           <el-table-column v-for="(item,key) in tableKey" 
                           :key="key"
                           :type="item.type?item.type:''"

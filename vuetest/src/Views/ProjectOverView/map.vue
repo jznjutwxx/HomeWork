@@ -264,8 +264,7 @@ export default {
         "海湾镇"
       ],
       pros: ["1", "2", "3", "4", "5"],
-      //年度时间选项
-      dateBeginParam: "2015",
+      dateBeginParam: "2015", //年度时间选项
       dateEndParam: "2018",
       map: null,
       layers: null,
@@ -307,8 +306,8 @@ export default {
     };
   },
   mounted: function() {
-    this.getDataEvent();
     this.initMap();
+    this.getDataEvent();
     this.afreshBelowContent();
     $(window).resize(
       function() {
@@ -317,11 +316,13 @@ export default {
       }.bind(this)
     );
   },
+  watch: {
+    contentheight: function(val) {
+      this.contentheight = val;
+    }
+  },
   methods: {
     initMap: function() {
-      // console.log(document.documentElement.clientHeight);
-      //console.log(document.body.offsetHeight);
-
       this.map = new SuperMap.Map("showMap", {
         controls: [
           new SuperMap.Control.Navigation({
@@ -350,7 +351,7 @@ export default {
       });
     },
     onGcctFeatureSelect: function(e) {
-      console.log(e);
+      //console.log(e);
     },
     addLayers: function() {
       this.map.addLayers(this.layers);
@@ -527,7 +528,7 @@ export default {
         $(".proTable").css("height", "290px");
         $(".el-table--border").css("height", "202px");
         $(".el-table__body-wrapper").css({
-          'height': "170px",
+          height: "170px",
           "overflow-y": "hidden"
         });
         $(".hideDown").css("bottom", "265px");
@@ -1000,14 +1001,14 @@ export default {
         }
       ];
 
-      // var zom = this.map.getZoom();
-      // if (zom >= 3) {
-      //   this.getFeaturesBySQL(1);
-      //   this.gcctSelect.activate();
-      // } else {
-      //   this.getFeaturesBySQL(0);
-      //   this.gcctSelect.deactivate();
-      // }
+      var zom = this.map.getZoom();
+      if (zom >= 3) {
+        this.getFeaturesBySQL(1);
+        this.gcctSelect.activate();
+      } else {
+        this.getFeaturesBySQL(0);
+        this.gcctSelect.deactivate();
+      }
     },
     //根据条件筛选地图空间数据
     getFeaturesBySQL: function(paraNum) {
@@ -1061,7 +1062,7 @@ export default {
           "gcct0514:gcct_pl"
         ],
         fromIndex: 0,
-        toIndex: 1000
+        toIndex: 500
       });
       //0取数据，1渲染图层
       if (paraNum == 0) {
@@ -1110,7 +1111,7 @@ export default {
           gcobj.y = obj[i].geometry.getCentroid().y;
         }
         if ($.inArray(obj[i].data.S_PROJECT_NO, this.mapSpaceId) == -1) {
-          this.mapSpaceData.push(obj);
+          this.mapSpaceData.push(gcobj);
           this.mapSpaceId.push(obj[i].data.S_PROJECT_NO);
         }
       }
@@ -1131,9 +1132,10 @@ export default {
     getPointDataArr: function() {
       var spData = this.mapSpaceData;
       var dbData = this.mapDbData;
-      let i = 0,j = 0;
+      let i = 0,
+        j = 0;
       for (; i < spData.length; i++) {
-        let po = {},
+        var po = {},
           k = 0;
         breakout: for (; j < dbData.length; j++) {
           k = 0;
@@ -1154,6 +1156,7 @@ export default {
     addMarkers: function() {
       this.markerLayer.clearMarkers();
       var podata = this.pointDataArr;
+
       let i = 0;
       var markers = [];
       for (; i < podata.length; i++) {
@@ -1204,6 +1207,7 @@ export default {
         this.markerLayer.addMarker(marker);
         markers.push(marker);
       }
+
       this.markers = markers;
       for (var j = 0; j < markers.length; j++) {
         //给所有的marker注册单击事件
@@ -1214,7 +1218,7 @@ export default {
     showInfoWin: function(e) {
       this.closeInfoWin();
       var that = e.object;
-      var contentHTML = "<div id='ptPop'>";
+      var contentHTML = "<div  id='ptPop'>"; //地图上点的弹框
       contentHTML +=
         "<div id='ptPopTitle'><span style='margin-left:20px;'></span>";
       contentHTML += "<div>";
@@ -1440,6 +1444,20 @@ export default {
   background-color: #ffffff;
   overflow: hidden;
 }
+#ptInfo,
+#ptInfo_contentDiv,
+#ptInfo_GroupDiv {
+  width: 410px !important;
+}
+
+#ptInfo_contentDiv {
+  padding-right: 0px;
+  padding-bottom: 0;
+}
+
+#ptInfo_GroupDiv {
+  height: 266px;
+}
 #ptPop {
   width: 380px;
   font-family: "Microsoft YaHei";
@@ -1463,6 +1481,16 @@ export default {
   width: 410px;
   height: 34px;
   border-radius: 5px 5px 0 0;
+}
+#ptPop table {
+  line-height: 26px;
+  color: rgb(0, 0, 0);
+  font-size: 12px;
+  font-weight: normal;
+  border-color: #dcdcdc;
+  width: 372px;
+  margin: 14px 0 0 18px;
+  height: 160px;
 }
 #ptPop table .firtlist {
   background-color: #f5f5f5;
@@ -1489,6 +1517,27 @@ export default {
   font-weight: bold;
   text-align: right;
   padding-right: 8px;
+}
+#ptInfo_close {
+  background: url("/static/Images/zhjc/btn_close_normal.png") no-repeat;
+  right: 0px !important;
+  top: 9px !important;
+}
+
+#ptInfo_close:hover {
+  background: url("/static/Images/zhjc/btn_close_active.png") no-repeat;
+  top: 5px !important;
+  right: 4px !important;
+}
+#showGcDetail {
+  width: 100px;
+  height: 32px;
+  background: url("/static/Images/gczl/btn_gongcxq_normal.png");
+  margin: 5px 10px 0 20px;
+  border: none;
+}
+#showGcDetail:hover {
+  background: url("/static/Images/gczl/btn_gongcxq_active.png");
 }
 </style>
 

@@ -8,6 +8,7 @@ import App from './App'
 import Home from './Home'
 import GCZTStatisticsIndex from './Views/GcztStatistics/Index'
 import ProjectOverViewIndex from './Views/ProjectOverView/Index'
+import ZHJC from './Views/ZHJC/Index'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -26,6 +27,10 @@ const router = new VueRouter({
     {
       path: "/projectoverview",
       component: ProjectOverViewIndex
+    },
+    {
+      path: "/zhjc",
+      component: ZHJC
     }
   ],
   mode: 'history'

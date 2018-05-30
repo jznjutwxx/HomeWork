@@ -4,7 +4,8 @@
       <ul class="ulcss">
       <li><router-link class="licss" to="/">Home&nbsp;|</router-link></li>
       <li><router-link class="licss" to="/gcztStatistics">工程状态统计&nbsp;|</router-link></li> 
-      <li><router-link class="licss" to="/projectoverview">工程总览</router-link></li>       
+      <li><router-link class="licss" to="/projectoverview">工程总览&nbsp;|</router-link></li>    
+      <li><router-link class="licss" to="/zhjc">综合监测&nbsp;|</router-link></li>      
     </ul>
     </div>
     <div>

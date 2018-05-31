@@ -81,7 +81,7 @@
                 <table id="szqsTable" border="1" cellpadding="0" cellspacing="0"></table>
                 <div id="yearSelect">
                     <el-button icon="el-icon-arrow-left" >上一年</el-button>
-                    <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份"  value-format="yyyy" v-on:change="yearChange">
+                    <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份"  value-format="yyyy" >
                     </el-date-picker>
                     <el-button >下一年<i class="el-icon-arrow-right el-icon--right"></i></el-button>
                     <el-button type="primary" icon="el-icon-upload2">导出</el-button>
@@ -96,6 +96,7 @@
     </div>
 </template>
 <script>
+import $ from "jquery";
 import zhjcleft from "./com_zhjcleft";
 import combar from "../../components/com_echarts/Bar";
 import comline from "../../components/com_echarts/Line";
@@ -104,6 +105,15 @@ export default {
     return {
       map: null,
       layers: [],
+      baselayer: null,
+      riverlayer: null, //河流图层
+      vectorLayer: null,
+      fsfxVectorLayer: null, //风速风向图层
+      jcdMarkersLayer: null, //监测点图层
+      fxbaselayerurl:
+        "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
+      riverLayerUrl:
+        "http://222.66.154.70:8090/iserver/services/map-ugcv5-fxst200005032/rest/maps/fxst2000_0503",
       leftData: [],
       leftJclx: "",
       belowTitle: "",
@@ -113,15 +123,16 @@ export default {
       rgLegendShow: false,
       mapJcdPopTitle: "南沙港北闸",
       zdjcdDialogVisible: false, //控制弹窗的显示
-      szqsDialogVisible: true,
+      szqsDialogVisible: false,
       activeName: "ylBar",
       barOption: null,
       szqsLineOption: null,
       zdjcdTableData: [], //图形右侧表格数据
       swLineOption: null, //水位图
-      llLineOption: null,//流量图
-      zdjcdTime: '2018-05-31',
-      noticeMsg: "01-04 4时水位最高为2.6m(超警戒)，当日累计流量173m³", //雨水提示信息,
+      llLineOption: null, //流量图
+      zdjcdTime: "2018-05-31",
+      noticeMsg: "01-04 4时水位最高为2.6m(超警戒)，当日累计流量173m³", //雨水提示信息
+      yearVlue:'2018',
     };
   },
   components: {
@@ -130,8 +141,82 @@ export default {
     comline: comline
   },
   watch: {},
-  mounted: function() {},
+  mounted: function() {
+    this.afreshBelowContent();
+    this.initMap();
+    $(window).resize(
+      function() {
+        this.afreshBelowContent();
+      }.bind(this)
+    );
+  },
   methods: {
+    initMap: function() {
+      this.map = new SuperMap.Map("mapContainer", {
+        allOverlays: true,
+        controls: [
+          new SuperMap.Control.Navigation({
+            //添加导航控件到map
+            dragPanOptions: {
+              enableKinetic: true //拖拽动画
+            }
+          })
+        ]
+      });
+      this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer(
+        "2016年奉贤基础底图",
+        this.fxbaselayerurl,
+        null,
+        { maxResolution: "auto", isBaseLayer: true }
+      );
+      this.riverlayer = new SuperMap.Layer.TiledDynamicRESTLayer(
+        "奉贤河流",
+        this.riverLayerUrl,
+        null,
+        { maxResolution: "auto", isBaseLayer: true }
+      );
+      this.vectorLayer = new SuperMap.Layer.Vector("查询高亮图层");
+      this.fsfxVectorLayer = new SuperMap.Layer.Vector("风速风向图层");
+      this.jcdMarkersLayer = new SuperMap.Layer.Markers("监测点图层");
+      this.layers = [
+        this.riverlayer,
+        this.vectorLayer,
+        this.fsfxVectorLayer,
+        this.jcdMarkersLayer
+      ];
+      this.riverlayer.events.on({ layerInitialized: this.addLayers });
+    },
+    addLayers: function() {
+      this.map.addLayers(this.layers);
+      this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
+    //   if (window.screen.width <= 1024 && window.screen.height <= 1366) {
+    //     this.map.zoomTo(0);
+    //     $("#belowContent").css("height", "200px");
+    //     $(".el-table").css("font-size", "12px");
+    //     //this.pagesize = 2;
+    //   } else if (1024 < window.screen.width && window.screen.width <= 1280) {
+    //     this.map.zoomTo(1);
+    //   } else if (1280 < window.screen.width && window.screen.width <= 1366) {
+    //     this.map.zoomTo(1);
+    //   } else if (1366 < window.screen.width && window.screen.width <= 1600) {
+    //     this.map.zoomTo(1);
+    //   } else {
+    //     this.map.zoomTo(2);
+    //   }
+    },
+    afreshBelowContent: function() {
+      if (window.screen.height <= 900) {
+        $("#belowContent").css("height", "200px");
+        $(".el-table__body-wrapper").css("height", "89px");
+        $(".el-table__body-wrapper").css("overflow-y", "auto");
+        $("#hideBelowContent").css("bottom", "200px");
+      } else {
+        $("#belowContent").css("height", "303px");
+        $(".el-table__body-wrapper").css("height", "192px");
+        $(".el-table__body-wrapper").css("overflow-y", "auto");
+        $("#hideBelowContent").css("bottom", "303px");
+      }
+    },
     getLeftData: function(leftData, bleowTableTitle, jclx) {},
     initMapExtent: function() {
       this.map.zoomTo(0);
@@ -147,22 +232,16 @@ export default {
       done();
     },
     handleClick: function() {},
-    preDay:function(){
-
-    },
-    nextDay:function(){
-
-    },
-    dayChange:function(){
-
-    },
+    preDay: function() {},
+    nextDay: function() {},
+    dayChange: function() {}
   }
 };
 </script>
 <style scoped>
 html,
 body,
-#app {
+ {
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -171,6 +250,7 @@ body,
 }
 
 #app {
+    height: 583px;
   position: relative;
 }
 
@@ -221,38 +301,38 @@ body,
   left: 9px;
 }
 #tiemSelect {
-        position: absolute;
-        top: 46px;
-        left: 200px;
-    }
-    #szqsCharts {
-        width: 660px;
-        height: 230px;
-        padding: 40px 0px 0px 0px !important;
-    }
-    #szqsTable {
-        width: 100%;
-        height: 230px;
-        margin-top: 10px;
-        position: relative;
-        text-align: center;
-        border-top: 1px #333333 solid;
-        border-right: 0;
-        border-bottom: 0;
-        border-left: 1px #333333 solid;
-    }
+  position: absolute;
+  top: 46px;
+  left: 200px;
+}
+#szqsCharts {
+  width: 660px;
+  height: 230px;
+  padding: 40px 0px 0px 0px !important;
+}
+#szqsTable {
+  width: 100%;
+  height: 230px;
+  margin-top: 10px;
+  position: relative;
+  text-align: center;
+  border-top: 1px #333333 solid;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 1px #333333 solid;
+}
 
-        #szqsTable td {
-            border-top: 0;
-            border-right: 1px #333333 solid;
-            border-bottom: 1px #333333 solid;
-            border-left: 0;
-        }
-        #yearSelect {
-        position: absolute;
-        top: 50px;
-        left: 180px;
-    }
+#szqsTable td {
+  border-top: 0;
+  border-right: 1px #333333 solid;
+  border-bottom: 1px #333333 solid;
+  border-left: 0;
+}
+#yearSelect {
+  position: absolute;
+  top: 50px;
+  left: 180px;
+}
 </style>
 
 

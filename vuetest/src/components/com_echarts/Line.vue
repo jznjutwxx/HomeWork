@@ -1,49 +1,44 @@
 <template>
-    <div class='charts' id="comBar" ref="comBar">
+    <div class="charts" ref="comline">
+
     </div>
 </template>
-
 <script>
 var echarts = require("echarts");
 import $ from "jquery";
-
 export default {
   data: function() {
     return {
       options: {
-        color: ["#50a6ff"],
+        color: [],
         title: {
           text: ""
+        },
+        tooltip: {
+          trigger: "axis"
         },
         legend: {
           data: []
         },
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "shadow"
-          }
-        },
         grid: {
           left: "3%",
           right: "4%",
-          bottom: "4%",
+          bottom: "3%",
           containLabel: true
         },
-        xAxis: [
-          {
-            type: "category",
-            data: [],
-            axisTick: {
-              alignWidthLabel: true
-            }
+        toolbox: {
+          feature: {
+            //saveAsImage: {}
           }
-        ],
-        yAxis: [
-          {
-            type: "value"
-          }
-        ],
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: []
+        },
+        yAxis: {
+          type: "value"
+        },
         series: []
       }
     };
@@ -59,13 +54,13 @@ export default {
           xAxis: {},
           yAxis: {},
           series: [],
-          grid: []
+          grid: {}
         };
       }
     }
   },
   watch: {
-    option: function(val, oldval) {
+    option: function(val, oldVal) {
       this.updateCharts(val);
       this.charts.resize();
     }
@@ -75,7 +70,7 @@ export default {
   },
   methods: {
     drawcharts: function() {
-      this.charts = echarts.init(this.$refs.comBar);
+      this.charts = echarts.init(this.$refs.comline);
       this.charts.setOption(this.options);
       $(window).resize(
         function() {
@@ -93,10 +88,10 @@ export default {
       this.options.title = option.title;
       this.options.legend = option.legend;
       this.options.xAxis = option.xAxis;
+      this.options.yAxis = option.yAxis;
       if (option.grid != undefined) {
         this.options.grid = option.grid;
       }
-      this.options.yAxis = option.yAxis;
       this.options.series = option.series;
       this.charts.setOption(this.options);
     }
@@ -106,8 +101,7 @@ export default {
 <style scoped>
 .charts {
   width: 100%;
-  padding: 15px 0 0 0;
+  padding: 15px 0px 0px 0px;
 }
 </style>
-
 

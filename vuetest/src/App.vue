@@ -57,13 +57,19 @@
             <router-link to="/gghd" class="licss">骨干河道水质情况分析</router-link> 
           </el-menu-item>
           <el-menu-item index="3-2-6">
-            <router-link to="" class="licss">清洁水行动水质达标统计</router-link>  
+            <router-link to="/cleanwater" class="licss">清洁水行动水质达标统计</router-link>  
           </el-menu-item>
           <el-menu-item index="3-2-7">
              <router-link to="" class="licss">水质取样统计</router-link>  
           </el-menu-item>
         </el-submenu>
       </el-submenu>
+      <el-menu-item index="4">
+        <router-link class="licss" to="">水文</router-link>
+      </el-menu-item>
+      <el-menu-item index="5">
+        <router-link class="licss" to="">水资源</router-link>
+      </el-menu-item>
     </el-menu>
     <div>
       <router-view></router-view>

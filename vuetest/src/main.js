@@ -10,6 +10,7 @@ import GCZTStatisticsIndex from './Views/GcztStatistics/Index'
 import ProjectOverViewIndex from './Views/ProjectOverView/Index'
 import ZHJC from './Views/ZHJC/Index'
 import GGHD from './Views/RiverQuality/GGHD'
+import CleanWater from './Views/RiverQuality/CleanWater'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -36,6 +37,10 @@ const router = new VueRouter({
     {
       path: "/gghd",
       component: GGHD
+    },
+    {
+      path: "/cleanwater",
+      component: CleanWater
     }
   ],
   mode: 'history'

@@ -189,20 +189,6 @@ export default {
     addLayers: function() {
       this.map.addLayers(this.layers);
       this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
-      //   if (window.screen.width <= 1024 && window.screen.height <= 1366) {
-      //     this.map.zoomTo(0);
-      //     $("#belowContent").css("height", "200px");
-      //     $(".el-table").css("font-size", "12px");
-      //     //this.pagesize = 2;
-      //   } else if (1024 < window.screen.width && window.screen.width <= 1280) {
-      //     this.map.zoomTo(1);
-      //   } else if (1280 < window.screen.width && window.screen.width <= 1366) {
-      //     this.map.zoomTo(1);
-      //   } else if (1366 < window.screen.width && window.screen.width <= 1600) {
-      //     this.map.zoomTo(1);
-      //   } else {
-      //     this.map.zoomTo(2);
-      //   }
     },
     afreshBelowContent: function() {
       if (window.screen.height <= 900) {
@@ -240,7 +226,8 @@ export default {
 </script>
 <style scoped>
 html,
-body {
+body,
+ {
   height: 100%;
   width: 100%;
   overflow: hidden;

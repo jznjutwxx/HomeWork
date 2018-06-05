@@ -68,7 +68,7 @@
         <router-link class="licss" to="">水文</router-link>
       </el-menu-item>
       <el-menu-item index="5">
-        <router-link class="licss" to="">水资源</router-link>
+        <router-link class="licss" to="/waterres">水资源</router-link>
       </el-menu-item>
     </el-menu>
     <div>

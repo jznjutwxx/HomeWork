@@ -11,6 +11,7 @@ import ProjectOverViewIndex from './Views/ProjectOverView/Index'
 import ZHJC from './Views/ZHJC/Index'
 import GGHD from './Views/RiverQuality/GGHD'
 import CleanWater from './Views/RiverQuality/CleanWater'
+import WaterRes from './Views/WaterRes/Index'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -41,6 +42,10 @@ const router = new VueRouter({
     {
       path: "/cleanwater",
       component: CleanWater
+    },
+    {
+      path: "/waterres",
+      component: WaterRes
     }
   ],
   mode: 'history'

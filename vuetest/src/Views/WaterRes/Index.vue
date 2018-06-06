@@ -5,6 +5,13 @@
                 <div class="title" style="text-align:center;">月用水量(1月)</div>
                 <comleft ref="szyleft"></comleft>
             </el-col>
+            <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="10" v-bind:lg="10" v-bind:xl="12">
+                <commap ref="comSzyMap"></commap>
+            </el-col>
+            <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss" >
+                <div class="title ysxl">用水效率(2017年上半年)</div>
+                <comright></comright>
+            </el-col>
         </el-row>
     </div>
 </template>

@@ -12,6 +12,7 @@ import ZHJC from './Views/ZHJC/Index'
 import GGHD from './Views/RiverQuality/GGHD'
 import CleanWater from './Views/RiverQuality/CleanWater'
 import WaterRes from './Views/WaterRes/Index'
+import SWSY from './Views/Hydrology/SWSYIndex'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -46,6 +47,10 @@ const router = new VueRouter({
     {
       path: "/waterres",
       component: WaterRes
+    },
+    {
+      path: "/swsy",
+      component: SWSY
     }
   ],
   mode: 'history'

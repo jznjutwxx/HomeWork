@@ -5,26 +5,414 @@
                  <div class="titlediv hdgkdiv" v-on:click="showHDnum">河道概况</div>
                  <comleft ref="swsyleft" v-on:getszdbl-event="showSZDBL" v-bind:lefttown='lefttown'></comleft>
             </el-col>
+            <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="10" v-bind:lg="10" v-bind:xl="12" style="padding-left:3px;">
+              <div class="bigBox">
+                <div id="mapContainer" v-bind:style="{height:mapheight+'px'}">
+                    <div style="position:absolute;top:30px;left:15px;z-index:2000;">
+                        <div v-on:click="initMapExtent" style="width:24px;height:24px; background:url(/static/Images/swsy/btn_dingw.png) no-repeat;cursor:pointer;">
+
+                        </div>
+                        <div v-on:click="mapZoomToBig" style="width:24px;height:24px;margin-top:3px;background:url(/static/Images/swsy/btn_jia.png) no-repeat;cursor:pointer;">
+
+                        </div>
+                        <div v-on:click="mapZoomToSmall" style="width:24px;height:24px;margin-top:2px; background:url(/static/Images/swsy/btn_jian.png) no-repeat;cursor:pointer;">
+
+                        </div>
+                    </div>
+                </div>
+                 <div id="mapTitle">
+                    {{mapTitle}}
+                </div>
+                <div id="szdbltl" v-show="controlSzdbltlShow">
+                    <el-row v-bind:gutter="0" id="longLine">
+                        <el-col v-bind:span="24"><div class=""></div></el-col>
+                    </el-row>
+                    <el-row v-bind:gutter="20">
+                        <el-col v-bind:span="12"><div class="grid-content bg-green"></div></el-col>
+                        <el-col v-bind:span="12">
+                            <div class="text"> 95%以上</div>
+                        </el-col>
+                    </el-row>
+                    <el-row v-bind:gutter="20">
+                        <el-col v-bind:span="12"><div class="grid-content bg-blue"></div></el-col>
+                        <el-col v-bind:span="12"><div class="text">80%-95%</div></el-col>
+                    </el-row>
+                    <el-row v-bind:gutter="20">
+                        <el-col v-bind:span="12"><div class="grid-content bg-red"></div></el-col>
+                        <el-col v-bind:span="12"><div class="text">80%以下</div></el-col>
+                    </el-row>
+                </div>
+                <div id="cwyb" v-show="cwybDatas[0].s_tide_tiem_am">
+                    <el-row style="margin-bottom:-5px;">
+                        <el-col v-bind:span="24">
+                            <span v-text="cwybTime"></span>-<span>潮位预报</span>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col v-bind:span="24">
+                            <div id="cwfg"></div>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col v-bind:span="12">
+                            {{cwybDatas[0].s_site_name}}
+                        </el-col>
+                        <el-col v-bind:span="12">
+                            {{cwybDatas[1].s_site_name}}
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col v-bind:span="6">潮时</el-col>
+                        <el-col v-bind:span="6">潮高</el-col>
+                        <el-col v-bind:span="6">潮时</el-col>
+                        <el-col v-bind:span="6">潮高</el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col v-bind:span="6">
+                            {{cwybDatas[0].s_tide_tiem_am}}
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            {{cwybDatas[0].s_tide_high_am}}
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            {{cwybDatas[1].s_tide_tiem_am}}
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            {{cwybDatas[1].s_tide_high_am}}
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col v-bind:span="6">
+                            {{cwybDatas[0].s_tide_tiem_pm}}
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            {{cwybDatas[0].s_tide_high_pm}}
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            {{cwybDatas[1].s_tide_tiem_pm}}
+                        </el-col>
+                        <el-col v-bind:span="6">
+                            {{cwybDatas[1].s_tide_tiem_pm}}
+                        </el-col>
+                    </el-row>
+                </div>
+                <div v-show="!(cwybDatas[0].s_tide_tiem_am)" id="notcwyb">
+                    非汛期-无潮位预报
+                </div>
+                <el-dialog id="ysPop" v-bind:title="nowStationName" v-bind:visible.sync="dialogVisible" v-bind:before-close="handleClose">
+                    <el-tabs v-model="activeName" v-on:tab-click="handleClick">
+                        <el-tab-pane label="雨量趋势图" name="ylBar">
+                            <combar v-bind:option="barOption" class="yslCharts" ref="ylbar" v-show="ylbarShow"></combar>
+                        </el-tab-pane>
+                        <el-tab-pane label="水位趋势图" name="swLine">
+                            <comline v-bind:option="swLineOption" class="yslCharts" ref="swline" v-show="swlineShow"></comline>
+                        </el-tab-pane>
+                        <el-tab-pane label="流量趋势图" name="llLine">
+                            <comline v-bind:option="llLineOption" class="yslCharts" ref="llline" v-show="lllineShow"></comline>
+                        </el-tab-pane>
+                    </el-tabs>
+                    <img v-if="noYLdata" class="noticeMsg" src="/static/Images/swsy/img_暂无雨量数据.png" />
+                    <img v-if="noSWdata" class="noticeMsg" src="/static/Images/swsy/img_暂无水位数据.png" />
+                    <img v-if="noLLdata" class="noticeMsg" src="/static/Images/swsy/img_暂无流量数据.png" />
+                    <div id="tiemSelect" v-show="tiemSelectShow">
+                        <span class="demonstration">时间：</span>
+                        <el-date-picker v-model="queryChartStartTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" size="small" style="width:190px;">
+                        </el-date-picker>
+                        <span class="demonstration">-</span>
+                        <el-date-picker v-model="queryChartEndTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" size="small" style="width:190px;">
+                        </el-date-picker>
+                        <el-button type="primary" icon="el-icon-search" size="small" v-on:click="queryDateRangeCharts">查询</el-button>
+                    </div>
+                    <!--图表重点内容提示区域-->
+                    <div id="noticeMsg">
+                        <img src="/static/Images/swsy/ico_notice.png" />
+                        <span v-text="noticeMsg">
+
+                        </span>
+                    </div>
+                </el-dialog>
+              </div>
+            </el-col>
+            <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
+              <div class="titlediv cztj" v-on:click="showZCnum">测站统计</div>
+              <comright ref="swsyRight" v-bind:lefttown='lefttown'></comright>
+            </el-col>
         </el-row>
     </div>
 </template>
 <script>
+import $ from "jquery";
+var moment = require("moment");
 import comleft from "./comleft";
+import comright from "./comright";
+import commap from "./commap";
+import bar from "../../components/com_echarts/Bar";
+import line from "../../components/com_echarts/Line";
 export default {
   data() {
     return {
-      lefttown: "奉贤区"
+      mapheight: document.documentElement.clientHeight - 32.5,
+      mapTitle: "河道概况",
+      lefttown: "奉贤区",
+      activeName: "ylBar", //设置默认激活哪一个tab页
+      hdInfo: null,
+      map: null,
+      drawPoint: null,
+      selectFeature: null,
+      layers: [],
+      baselayer: null,
+      hdNumCoverLayer: null, //河道数量图层 和 水质达标率数值图层
+      czNumCoverLayer: null, //各个镇的测站总数量图层
+      representativeMarkersLayer: null, //一镇一站标记图层,测站代表图层
+      jtczLayer: null, //具体测站图层
+      czNameCoverLayer: null, //测站名字图层
+      dxvectorLayer: null, //点选
+      szdblVectorLayer: null, //水质达标率高亮图层
+      controlSzdbltlShow: false, //控制水质达标率图例的显示
+      isCZnumModel: false,
+      fxbaselayerurl:
+        "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu4/rest/maps/FengXianJiChuDiTu",
+      //数据库中读取的数据，
+      AllCZDetailInfo: [], //具体测站的信息
+      nowStationName: "",
+      yslDatas: [], //雨、水、流数据.雨量 mm、水位 m、流量 m³
+      queryChartStartTime: moment().format("YYYY-MM-DD HH:MM:SS"),
+      queryChartEndTime: moment().format("YYYY-MM-DD hh:mm:ss"),
+      swAllInfo: [
+        {
+          x: 121.37811,
+          y: 30.93567,
+          twon: "庄行镇",
+          hdnum: 153,
+          szdbl: 1,
+          percent: "100%",
+          cznum: 18,
+          zctype: "雨量站"
+        },
+        {
+          x: 121.45077,
+          y: 30.95395,
+          twon: "南桥镇",
+          hdnum: 210,
+          szdbl: 0.9,
+          percent: "90%",
+          cznum: 20,
+          zctype: "水文站"
+        },
+        {
+          x: 121.44545,
+          y: 30.8561,
+          twon: "柘林镇",
+          hdnum: 89,
+          szdbl: 0.8,
+          percent: "80%",
+          cznum: 5,
+          zctype: "水质站"
+        },
+        {
+          x: 121.55954,
+          y: 30.98448,
+          twon: "金汇镇",
+          hdnum: 125,
+          szdbl: 0.7,
+          percent: "70%",
+          cznum: 9,
+          zctype: "水位站"
+        },
+        {
+          x: 121.54104,
+          y: 30.91457,
+          twon: "青村镇",
+          hdnum: 156,
+          szdbl: 0.6,
+          percent: "60%",
+          cznum: 4,
+          zctype: "雨量站"
+        },
+        {
+          x: 121.58283,
+          y: 30.85589,
+          twon: "海湾镇",
+          hdnum: 53,
+          szdbl: 0.5,
+          percent: "50%",
+          cznum: 7,
+          zctype: "雨量站"
+        },
+        {
+          x: 121.65281,
+          y: 30.94117,
+          twon: "奉城镇",
+          hdnum: 69,
+          szdbl: 1,
+          percent: "100%",
+          cznum: 7,
+          zctype: "雨量站"
+        },
+        {
+          x: 121.72939,
+          y: 30.94165,
+          twon: "四团镇",
+          hdnum: 169,
+          szdbl: 1,
+          percent: "100%",
+          cznum: 7,
+          zctype: "雨量站"
+        }
+      ],
+      dialogVisible: false,
+      barOption: null, //雨量柱状图的参数
+      swLineOption: null, //水位图
+      llLineOption: null, //流量图
+      ylbarShow: true,
+      swlineShow: true,
+      lllineShow: true,
+      noYLdata: false,
+      noSWdata: false,
+      noLLdata: false,
+      tiemSelectShow: true,
+      noticeMsg: "", //"5月30日4时雨量最高为33mm(超警戒)，当日累计流量1000mm", //雨水提示信息
+      cwybTime: "6月7号", //地图潮位预报的title
+      cwybDate: "",
+      cwybDatas: [
+        {
+          s_site_name: "金汇港南闸（外）站",
+          s_tide_tiem_am: "2:09",
+          s_tide_high_am: "4.59",
+          s_tide_tiem_pm: "13:55",
+          s_tide_high_pm: "3.79",
+          t_tide_time: "2018-06-02 00:00:00"
+        },
+        {
+          s_site_name: "金汇港北闸（外）站 ",
+          s_tide_tiem_am: "3:37",
+          s_tide_high_am: "3.33",
+          s_tide_tiem_pm: "16:07",
+          s_tide_high_pm: "2.85",
+          t_tide_time: "2018-06-02 00:00:00"
+        }
+      ]
     };
   },
   components: {
-    comleft: comleft
+    comleft: comleft,
+    comright: comright,
+    commap: commap,
+    combar: bar,
+    comline: line
   },
-  mounted() {},
+  watch: {
+    mapheight: function(val) {
+      this.mapheight = val;
+    }
+  },
+  mounted() {
+    this.initMap();
+  },
   methods: {
-    showHDnum() {},
+    initMap(){
+      this.map = new SuperMap.Map("mapContainer", {
+                    allOverlays: true, controls: [
+                    new SuperMap.Control.ScaleLine({ isImperialUnits: false }),
+                    new SuperMap.Control.Navigation({ //添加导航控件到map
+                        dragPanOptions: {
+                            enableKinetic: true //拖拽动画
+                        }
+                    })
+                    ]
+                });
+                this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto" });
+                this.szdblVectorLayer = new SuperMap.Layer.Vector("水质达标率高亮图层");
+                this.hdNumCoverLayer = new SuperMap.Layer.Vector("河道数量图层、水质达标率数值图层");
+                this.czNumCoverLayer = new SuperMap.Layer.Vector("各个镇的测站总数量图层");
+                this.representativeMarkersLayer = new SuperMap.Layer.Markers("一镇一站图层");
+                this.jtczLayer = new SuperMap.Layer.Markers("具体测站图层");
+                this.czNameCoverLayer = new SuperMap.Layer.Vector("具体测站名字");
+                this.dxvectorLayer = new SuperMap.Layer.Vector("点选图层");
+                this.layers = [this.baselayer, this.szdblVectorLayer, this.representativeMarkersLayer, this.czNumCoverLayer, this.dxvectorLayer, this.hdNumCoverLayer];
+                //点查询
+                this.drawPoint = new SuperMap.Control.DrawFeature(this.dxvectorLayer, SuperMap.Handler.Point);
+                this.map.addControl(this.drawPoint);
+                this.drawPoint.events.on({ "featureadded": this.drawPointCompleted });
+                this.baselayer.events.on({ "layerInitialized": this.addLayers });
+                this.map.events.on({ "zoomend": this.mapIsZoomend });
+                this.jtczLayer.events.on({ "mouseover": this.deactivePoint });
+                //一镇一站图层单击时
+                this.representativeMarkersLayer.events.on({ "mouseover": this.activePoint });
+                this.representativeMarkersLayer.events.on({ "mouseout": this.deactivePoint });
+
+    },
+    drawPointCompleted(){
+
+    },
+    mapIsZoomend(){
+
+    },
+    activePoint(){
+
+    },
+    deactivePoint(){
+
+    },
+    addLayers: function () {
+                var that = this;
+                that.map.addLayers(that.layers);
+                if (window.screen.width <= 1024) {
+                    this.map.zoomTo(0);
+                    $("#cwyb").css("font-size", "12px");
+                    $("#cwyb").css("width", "220px");
+                    $("#cwyb").css("bottom", "16px");
+                    $("#cwfg").css("width", "220px");
+                }
+                else if (1024 < window.screen.width && window.screen.width <= 1280) {
+                    this.map.zoomTo(1);
+                    $("#cwyb").css("font-size", "12px");
+                    $("#cwyb").css("width", "220px");
+                    $("#cwyb").css("bottom", "16px");
+                    $("#cwfg").css("width", "220px");
+                }
+                else if (1280 < window.screen.width && window.screen.width <= 1366) {
+                    this.map.zoomTo(1);
+                }
+                else if (1366 < window.screen.width && window.screen.width <= 1600) {
+                    this.map.zoomTo(1);
+                    $("#cwyb").css("font-size", "12px");
+                    $("#cwyb").css("width", "220px");
+                    $("#cwyb").css("bottom", "16px");
+                    $("#cwfg").css("width", "220px");
+                }
+                else {
+                    this.map.zoomTo(2);
+                }
+                that.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
+                /*----鼠标在地图上经过,触发点选-------*/
+                that.map.events.on({ "mouseover": this.selectTown });
+                this.showHDnum();
+            },
+            selectTown(){
+
+            },
+    showHDnum() {
+
+    },
     showSZDBL() {
       alert(1);
-    }
+    },
+    showZCnum() {
+      alert(2);
+    },
+    initMapExtent() {},
+    mapZoomToBig() {
+      this.map.zoomTo(this.map.getZoom() + 1);
+    },
+    mapZoomToSmall() {
+      this.map.zoomTo(this.map.getZoom() - 1);
+    },
+    handleClose: function(done) {
+      done();
+    },
+    handleClick() {},
+    queryDateRangeCharts() {}
   }
 };
 </script>
@@ -186,7 +574,7 @@ div.smMapViewport {
 .el-dialog {
   height: 484px;
   width: 916px;
-  background: url(/Images/swsy/img_bg_cezhanbig.png) no-repeat;
+  background: url(/static/Images/swsy/img_bg_cezhanbig.png) no-repeat;
   background-size: 1073px 484px;
   position: relative;
 }

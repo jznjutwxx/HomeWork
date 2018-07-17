@@ -11,6 +11,7 @@ import ProjectOverViewIndex from './Views/ProjectOverView/Index'
 import ZHJC from './Views/ZHJC/Index'
 import GGHD from './Views/RiverQuality/GGHD'
 import CleanWater from './Views/RiverQuality/CleanWater'
+import DDM from './Views/RiverQuality/DDMSZStatistics'
 import WaterRes from './Views/WaterRes/Index'
 import SWSY from './Views/Hydrology/SWSYIndex'
 
@@ -51,6 +52,10 @@ const router = new VueRouter({
     {
       path: "/swsy",
       component: SWSY
+    },
+    {
+      path: "/ddm",
+      component: DDM
     }
   ],
   mode: 'history'

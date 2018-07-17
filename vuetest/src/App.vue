@@ -42,7 +42,7 @@
         <el-submenu index="3-2">
           <template slot="title">河道水质评价</template>
           <el-menu-item index="3-2-1">
-            <router-link class="licss" to="">单断面水质统计</router-link> 
+            <router-link class="licss" to="/ddm">单断面水质统计</router-link> 
           </el-menu-item>
           <el-menu-item index="3-2-2">
             <router-link class="licss" to="">单河道水质统计</router-link>  
